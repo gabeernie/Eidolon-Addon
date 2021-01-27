@@ -1,0 +1,25 @@
+if (this.isHittingBlock) {
+   this.sendDiggingPacket(CPlayerDiggingPacket.Action.ABORT_DESTROY_BLOCK, this.currentBlock, face);
+}
+net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock event = net.minecraftforge.common.ForgeHooks.onLeftClickBlock(this.mc.player, loc, face);
+
+BlockState blockstate1 = this.mc.world.getBlockState(loc);
+this.mc.getTutorial().onHitBlock(this.mc.world, loc, blockstate1, 0.0F);
+this.sendDiggingPacket(CPlayerDiggingPacket.Action.START_DESTROY_BLOCK, loc, face);
+boolean flag = !blockstate1.isAir(this.mc.world, loc);
+if (flag && this.curBlockDamageMP == 0.0F) {
+   if (event.getUseBlock() != net.minecraftforge.eventbus.api.Event.Result.DENY)
+   blockstate1.onBlockClicked(this.mc.world, loc, this.mc.player);
+}
+
+if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.DENY) return true;
+if (flag && blockstate1.getPlayerRelativeBlockHardness(this.mc.player, this.mc.player.world, loc) >= 1.0F) {
+   this.onPlayerDestroyBlock(loc);
+} else {
+   this.isHittingBlock = true;
+   this.currentBlock = loc;
+   this.currentItemHittingBlock = this.mc.player.getHeldItemMainhand();
+   this.curBlockDamageMP = 0.0F;
+   this.stepSoundTickCounter = 0.0F;
+   this.mc.world.sendBlockBreakProgress(this.mc.player.getEntityId(), this.currentBlock, (int)(this.curBlockDamageMP * 10.0F) - 1);
+}
