@@ -1,4 +1,4 @@
-package com.lich.DarkArtifice;
+package com.lich.apocrypha;
 
 
 import elucent.eidolon.proxy.ClientProxy;
@@ -8,9 +8,9 @@ import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 
 
-@Mod(com.lich.DarkArtifice.DarkArtifice.MODID)
-public class DarkArtifice {
+@Mod(Apocrypha.MODID)
+public class Apocrypha {
     public static ISidedProxy proxy = DistExecutor.safeRunForDist(() -> ClientProxy::new, () -> ServerProxy::new);
 
-    public static final String MODID = "darkart";
-    }
+    public static final String MODID = "apocrypha";
+}
