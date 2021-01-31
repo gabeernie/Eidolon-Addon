@@ -10,10 +10,12 @@ import elucent.eidolon.util.ColorUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.projectile.ProjectileHelper;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.IndirectEntityDamageSource;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
@@ -45,9 +47,33 @@ public class LightningBoltProjectileEntity extends SpellProjectileEntity
     @Override
     public void tick()
     {
-        super.tick();
         Vector3d motion = getMotion();
+        setMotion(motion.x * 0.96, motion.y * 0.96, motion.z * 0.96);
+
+        // BEGIN : Taken from Entity base class. Cannot call super method or SpellProjectileEntity would override flight
+        if (!world.isRemote)
+            setFlag(6, isGlowing());
+        baseTick();
+        // END
+
+        if (!world.isRemote)
+        {
+            RayTraceResult ray = ProjectileHelper.func_234618_a_(this,
+                    (e) -> !e.isSpectator() && e.canBeCollidedWith() && !e.getUniqueID().equals(subClassCasterID));
+            if (ray.getType() == RayTraceResult.Type.ENTITY)
+                onImpact(ray, ((EntityRayTraceResult) ray).getEntity());
+            else if (ray.getType() == RayTraceResult.Type.BLOCK)
+                onImpact(ray);
+        }
+
         Vector3d pos = getPositionVec();
+        prevPosX = pos.x;
+        prevPosY = pos.y;
+        prevPosZ = pos.z;
+        setPosition(pos.x + motion.x, pos.y + motion.y, pos.z + motion.z);
+
+        motion = getMotion();
+        pos = getPositionVec();
         Vector3d norm = motion.normalize().scale(0.02500000037252903D);
 
         for (int i = 0; i < 8; ++i)
