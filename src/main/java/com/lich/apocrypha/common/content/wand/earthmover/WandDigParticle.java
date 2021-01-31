@@ -13,7 +13,7 @@ import net.minecraft.util.math.vector.Vector3d;
 
 import javax.annotation.Nonnull;
 
-import static java.lang.Math.abs;
+import static java.lang.Math.*;
 
 public class WandDigParticle extends SpriteTexturedParticle
 {
@@ -24,8 +24,10 @@ public class WandDigParticle extends SpriteTexturedParticle
     private       Vector3d direction;
     private       double   movementLength;
 
-    private final float uCoord;
-    private final float vCoord;
+    private final float minU;
+    private final float minV;
+    private final float maxU;
+    private final float maxV;
 
     public WandDigParticle(ClientWorld world, double x, double y, double z, double motionX, double motionY, double motionZ, BlockState state)
     {
@@ -35,16 +37,27 @@ public class WandDigParticle extends SpriteTexturedParticle
         sourceState = state;
         destination = new Vector3d(motionX, motionY, motionZ);
 
+        maxAge = (int) (60 + rand.nextGaussian() * 10);
+
         particleRed = 0.6F;
         particleGreen = 0.6F;
         particleBlue = 0.6F;
-        particleScale /= 2.0F;
-        uCoord = rand.nextFloat() * 3.0F;
-        vCoord = rand.nextFloat() * 3.0F;
+        particleScale /= 4.0F;
 
         updateSprite();
 
-        Vector3d trajectory = new Vector3d(x - motionX, y - motionY, z - motionZ);
+        float uDiff = (sprite.getMaxU() - sprite.getMinU()) / 4;
+        float vDiff = (sprite.getMaxV() - sprite.getMinV()) / 4;
+
+        int uSlice = rand.nextInt(4);
+        minU = sprite.getMinU() + uDiff * uSlice;
+        maxU = sprite.getMinU() + uDiff * (uSlice + 1);
+
+        int vSlice = rand.nextInt(4);
+        minV = sprite.getMinV() + vDiff * vSlice;
+        maxV = sprite.getMinV() + vDiff * (vSlice + 1);
+
+        Vector3d trajectory = new Vector3d(motionX - x, motionY - y, motionZ - z);
         movementLength = trajectory.length();
         direction = trajectory.normalize();
 
@@ -62,25 +75,25 @@ public class WandDigParticle extends SpriteTexturedParticle
     @Override
     protected float getMinU()
     {
-        return sprite.getInterpolatedU((uCoord + 1.0F) / 4.0F * 16.0F);
+        return minU;
     }
 
     @Override
     protected float getMaxU()
     {
-        return sprite.getInterpolatedU(uCoord / 4.0F * 16.0F);
+        return maxU;
     }
 
     @Override
     protected float getMinV()
     {
-        return sprite.getInterpolatedV(vCoord / 4.0F * 16.0F);
+        return minV;
     }
 
     @Override
     protected float getMaxV()
     {
-        return sprite.getInterpolatedV((vCoord + 1.0F) / 4.0F * 16.0F);
+        return maxV;
     }
 
     @Override
@@ -106,7 +119,7 @@ public class WandDigParticle extends SpriteTexturedParticle
 
     private Particle updateSprite()
     {
-        setSprite(Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelShapes().getTexture(sourceState, world, sourcePos));
+        setSprite(Minecraft.getInstance().getBlockRendererDispatcher().getBlockModelShapes().getTexture(sourceState));
         return this;
     }
 
@@ -124,15 +137,29 @@ public class WandDigParticle extends SpriteTexturedParticle
 
         double delta = age / (double) maxAge;
 
-        double x = sourcePos.getX() + 0.5 + (direction.getX() * (movementLength * delta));
-        double y = sourcePos.getY() + 0.5 + (direction.getY() * (movementLength * delta));
-        double z = sourcePos.getZ() + 0.5 + (direction.getZ() * (movementLength * delta));
+        Vector3d rightDir = direction.mul(1, 0, 0);
+        Vector3d upDir = rightDir.crossProduct(direction);
+        double radius = 0.25;
+        double pitch = 1 / (PI * 2);
+
+        double t = movementLength / pitch * delta;
+
+        double x = radius * cos(t) * rightDir.getX() + (radius * sin(t) * upDir.getX()) + (pitch * t * direction.getX());
+        double y = radius * cos(t) * rightDir.getY() + (radius * sin(t) * upDir.getY()) + (pitch * t * direction.getY());
+        double z = radius * cos(t) * rightDir.getZ() + (radius * sin(t) * upDir.getZ()) + (pitch * t * direction.getZ());
+
+        x = sourcePos.getX() + 0.5 + x;
+        y = sourcePos.getY() + 0.5 + y;
+        z = sourcePos.getZ() + 0.5 + z;
 
         setPosition(x, y, z);
     }
 
     private boolean isNearDestination()
     {
+/*
         return abs(posX - motionX) < 0.05 && abs(posY - motionY) < 0.05 && abs(posZ - motionZ) < 0.05;
+*/
+        return false;
     }
 }

@@ -14,6 +14,7 @@ import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 @Mod(Apocrypha.MODID)
 public class Apocrypha
@@ -34,6 +35,8 @@ public class Apocrypha
     {
         proxy.init();
         APRegistry.init();
+
+        FMLJavaModLoadingContext.get().getModEventBus().register(new APRegistry());
     }
 
     @OnlyIn(Dist.CLIENT)

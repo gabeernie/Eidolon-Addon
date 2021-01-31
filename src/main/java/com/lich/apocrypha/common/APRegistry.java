@@ -101,9 +101,9 @@ public class APRegistry
 
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
-    public void registerFactories(ParticleFactoryRegisterEvent evt)
+    public void registerFactories(ParticleFactoryRegisterEvent event)
     {
-        Minecraft.getInstance().particles.registerFactory((ParticleType) DIG_PARTICLE.get(), WandDigParticleType.Factory::new);
+        Minecraft.getInstance().particles.registerFactory(DIG_PARTICLE.get(), WandDigParticleType.Factory::new);
     }
 
     public static void init()
