@@ -114,13 +114,13 @@ public class EarthMoverWandItem extends WandItem
                         stepSoundTickCounter = 0.0F;
                     }
 
-                    for (int i = 0; i < 4; i++)
+                    for (int i = 0; i < 3; i++)
                     {
                         world.addParticle(new BlockParticleData(APRegistry.DIG_PARTICLE.get(), blockstate),
                                 miningPos.getX() + 0.5,
                                 miningPos.getY() + 0.5,
                                 miningPos.getZ() + 0.5,
-                                entity.getPosX(), entity.getPosY() + entity.getHeight() / 2, entity.getPosZ());
+                                entity.getPosX() - 0.2, entity.getPosY() + entity.getHeight() / 1.5, entity.getPosZ());
                     }
 
                     world.sendBlockBreakProgress(entity.getEntityId(), miningPos, (int) (curBlockDamageMP * 10.0F) - 1);

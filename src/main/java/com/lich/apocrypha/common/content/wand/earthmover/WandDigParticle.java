@@ -37,7 +37,7 @@ public class WandDigParticle extends SpriteTexturedParticle
         sourceState = state;
         destination = new Vector3d(motionX, motionY, motionZ);
 
-        maxAge = (int) (60 + rand.nextGaussian() * 10);
+        maxAge = (int) (25 + rand.nextGaussian() * 10);
 
         particleRed = 0.6F;
         particleGreen = 0.6F;
@@ -139,8 +139,8 @@ public class WandDigParticle extends SpriteTexturedParticle
 
         Vector3d rightDir = direction.mul(1, 0, 0);
         Vector3d upDir = rightDir.crossProduct(direction);
-        double radius = 0.25;
-        double pitch = 1 / (PI * 2);
+        double radius = 0.50;
+        double pitch = 3 / (PI * 2);
 
         double t = movementLength / pitch * delta;
 
