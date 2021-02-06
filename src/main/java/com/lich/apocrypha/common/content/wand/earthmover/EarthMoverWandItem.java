@@ -77,7 +77,7 @@ public class EarthMoverWandItem extends WandItem
     @Override
     public UseAction getUseAction(ItemStack stack)
     {
-        return UseAction.SPEAR;
+        return UseAction.CROSSBOW;
     }
 
     @Override
