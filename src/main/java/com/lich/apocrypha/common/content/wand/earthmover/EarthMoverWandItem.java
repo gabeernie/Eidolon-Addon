@@ -57,8 +57,8 @@ public class EarthMoverWandItem extends WandItem
     @Override
     public float getDestroySpeed(ItemStack stack, BlockState state)
     {
-        return max(Items.DIAMOND_PICKAXE.getDestroySpeed(diamondPickaxe, state),
-                Items.DIAMOND_SHOVEL.getDestroySpeed(diamondShovel, state));
+        return max(Items.DIAMOND_PICKAXE.getDestroySpeed(diamondPickaxe, state) * 0.5F,
+                Items.DIAMOND_SHOVEL.getDestroySpeed(diamondShovel, state) * 0.5F);
     }
 
     @Override
@@ -130,7 +130,7 @@ public class EarthMoverWandItem extends WandItem
                             miningPos.getX() + 0.5,
                             miningPos.getY() + 0.5,
                             miningPos.getZ() + 0.5,
-                            player.getPosX() - 0.2, player.getPosY() + player.getHeight() / 1.5, player.getPosZ());
+                            player.getPosX(), player.getPosY() + player.getHeight() / 1.5, player.getPosZ());
                 }
 
                 player.world.sendBlockBreakProgress(player.getEntityId(), miningPos, (int) (curBlockDamageMP * 10.0F) - 1);
