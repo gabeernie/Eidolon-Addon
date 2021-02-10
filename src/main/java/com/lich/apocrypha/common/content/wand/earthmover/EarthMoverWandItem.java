@@ -35,7 +35,7 @@ import net.minecraftforge.eventbus.api.Event.Result;
 import javax.annotation.Nullable;
 import java.util.UUID;
 
-import static java.lang.Math.max;
+import static java.lang.Math.*;
 
 public class EarthMoverWandItem extends WandItem
 {
@@ -124,13 +124,17 @@ public class EarthMoverWandItem extends WandItem
                     stepSoundTickCounter = 0.0F;
                 }
 
+                double playerYaw = toRadians(player.getYaw(Minecraft.getInstance().getRenderPartialTicks()));
+                double playerXOffset = cos(playerYaw) * -0.3F;
+                double playerZOffset = sin(playerYaw) * -0.3F;
+
                 for (int i = 0; i < 3; i++)
                 {
                     player.world.addParticle(new BlockParticleData(APRegistry.DIG_PARTICLE.get(), blockstate),
                             miningPos.getX() + 0.5,
                             miningPos.getY() + 0.5,
                             miningPos.getZ() + 0.5,
-                            player.getPosX(), player.getPosY() + player.getHeight() / 1.5, player.getPosZ());
+                            player.getPosX() + playerXOffset, player.getPosY() + player.getHeight() / 1.5, player.getPosZ() + playerZOffset);
                 }
 
                 player.world.sendBlockBreakProgress(player.getEntityId(), miningPos, (int) (curBlockDamageMP * 10.0F) - 1);

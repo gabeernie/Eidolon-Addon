@@ -129,7 +129,7 @@ public class WandDigParticle extends SpriteTexturedParticle
         prevPosX = posX;
         prevPosY = posY;
         prevPosZ = posZ;
-        if (age++ >= maxAge || (isNearDestination()))
+        if (age++ >= maxAge)
         {
             setExpired();
             return;
@@ -153,13 +153,5 @@ public class WandDigParticle extends SpriteTexturedParticle
         z = sourcePos.getZ() + 0.5 + z;
 
         setPosition(x, y, z);
-    }
-
-    private boolean isNearDestination()
-    {
-/*
-        return abs(posX - motionX) < 0.05 && abs(posY - motionY) < 0.05 && abs(posZ - motionZ) < 0.05;
-*/
-        return false;
     }
 }
